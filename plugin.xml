@@ -6,7 +6,6 @@
   <platform name="ios">
   <source-file src="src/ios/HumanSecurityPlugin.swift" />
   <header-file src="src/ios/HumanSecurity-Bridging-Header.h" />
-  <preference name="UseSwiftLanguageVersion" value="5.0" />
   <config-file target="build.xcconfig" parent="SWIFT_VERSION">
     <string>5.0</string>
   </config-file>
