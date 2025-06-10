@@ -18,6 +18,6 @@
     </config-file>
   </platform>
   <js-module src="www/HumanSecurityPlugin.js" name="HumanSecurityPlugin">
-    <clobbers target="cordova.plugins.HumanSecurity" />
+    <clobbers target="plugins.HumanSecurity" />
   </js-module>
 </plugin>
