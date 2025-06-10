@@ -1,1 +1,2 @@
-#import <Cordova/CDVPlugin.h>
+#import <Cordova/Cordova.h>
+#import "Bridging-Header.h"
