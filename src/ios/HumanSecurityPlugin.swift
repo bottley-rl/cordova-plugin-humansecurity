@@ -17,9 +17,27 @@ import WebKit
         do {
             try HumanSecurity.start(appId: appId, policy: policy)
             print("Human SDK initialized early via pluginInitialize")
+
+            if let wkWebView = findWKWebView(in: self.webView?.superview) {
+                HumanSecurity.setupWebView(
+                    webView: wkWebView, navigationDelegate: wkWebView.navigationDelegate)
+                print("Human SDK Manually called setupWebView")
+            }
         } catch {
             print("Human SDK failed to initialize: \(error.localizedDescription)")
         }
+    }
+
+    func findWKWebView(in view: UIView?) -> WKWebView? {
+        if let wk = view as? WKWebView {
+            return wk
+        }
+        for subview in view?.subviews ?? [] {
+            if let wk = findWKWebView(in: subview) {
+                return wk
+            }
+        }
+        return nil
     }
 
     @objc(getHeaders:)
@@ -40,7 +58,7 @@ import WebKit
         guard let responseString = command.argument(at: 0) as? String,
             let data = responseString.data(using: .utf8),
             let httpResponse = HTTPURLResponse(
-                url: URL(string: "https://www.google.com")!, // Not used - just a placeholder
+                url: URL(string: "https://www.google.com")!,  // Not used - just a placeholder
                 statusCode: 403,
                 httpVersion: nil,
                 headerFields: [:]
