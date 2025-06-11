@@ -4,6 +4,24 @@ import WebKit
 
 @objc(HumanSecurityPlugin) class HumanSecurityPlugin: CDVPlugin {
 
+    override func pluginInitialize() {
+        let appId: String = "xTfdm2W9"
+        let domains: Set<String> = Set([".rocketlawyer.com"])
+
+        let policy = HSPolicy()
+        policy.hybridAppPolicy.set(webRootDomains: domains, forAppId: appId)
+        policy.hybridAppPolicy.supportExternalWebViews = true
+        policy.hybridAppPolicy.automaticSetup = true
+        policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
+
+        do {
+            try HumanSecurity.start(appId: appId, policy: policy)
+            print("Human SDK initialized early via pluginInitialize")
+        } catch {
+            print("Human SDK failed to initialize: \(error.localizedDescription)")
+        }
+    }
+
     @objc(start:)
     func start(command: CDVInvokedUrlCommand) {
         guard let appId = command.argument(at: 0) as? String,
