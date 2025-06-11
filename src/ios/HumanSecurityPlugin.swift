@@ -14,6 +14,8 @@ import WebKit
         policy.hybridAppPolicy.automaticSetup = true
         policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
 
+        HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 10
+
         do {
             try HumanSecurity.start(appId: appId, policy: policy)
             print("Human SDK initialized early via pluginInitialize")
