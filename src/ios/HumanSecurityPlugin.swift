@@ -5,7 +5,7 @@ import WebKit
 @objc(HumanSecurityPlugin) class HumanSecurityPlugin: CDVPlugin {
 
     override func pluginInitialize() {
-        let appId: String = "xTfdm2W9"
+        let appId: String = "PXxTfdm2W9"
         let domains: Set<String> = Set([".rocketlawyer.com"])
 
         let policy = HSPolicy()
