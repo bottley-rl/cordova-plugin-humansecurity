@@ -22,16 +22,30 @@ import WebKit
         }
     }
 
+    @objc(getHeaders:)
+    func getHeaders(command: CDVInvokedUrlCommand) {
+        guard let appId = command.argument(at: 0) as? String else {
+            let result = CDVPluginResult(status: .error, messageAs: "Missing appId")
+            self.commandDelegate.send(result, callbackId: command.callbackId)
+            return
+        }
+
+        let headers = HumanSecurity.BD.headersForURLRequest(forAppId: appId)
+        let result = CDVPluginResult(status: .ok, messageAs: headers)
+        self.commandDelegate.send(result, callbackId: command.callbackId)
+    }
+
     @objc(start:)
     func start(command: CDVInvokedUrlCommand) {
         guard let appId = command.argument(at: 0) as? String,
-              let domainArray = command.argument(at: 1) as? [String] else {
+            let domainArray = command.argument(at: 1) as? [String]
+        else {
             let result = CDVPluginResult(status: .error, messageAs: "Missing appId or domains")
             self.commandDelegate.send(result, callbackId: command.callbackId)
             return
         }
 
-        let domains = Set(domainArray)
+        let domains: Set<String> = Set(domainArray)
 
         DispatchQueue.main.async {
             let policy = HSPolicy()
@@ -44,7 +58,9 @@ import WebKit
 
             do {
                 try HumanSecurity.start(appId: appId, policy: policy)
-                print("[HumanSecurityPlugin] SDK started with appId: \(appId) and domains: \(domains)")
+                print(
+                    "[HumanSecurityPlugin] SDK started with appId: \(appId) and domains: \(domains)"
+                )
                 let result = CDVPluginResult(status: .ok)
                 self.commandDelegate.send(result, callbackId: command.callbackId)
             } catch {
@@ -58,7 +74,8 @@ import WebKit
     @objc(setUserId:)
     func setUserId(command: CDVInvokedUrlCommand) {
         guard let userId = command.argument(at: 0) as? String,
-              let appId = command.argument(at: 1) as? String else {
+            let appId = command.argument(at: 1) as? String
+        else {
             let result = CDVPluginResult(status: .error, messageAs: "Missing userId or appId")
             self.commandDelegate.send(result, callbackId: command.callbackId)
             return
