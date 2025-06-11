@@ -35,42 +35,6 @@ import WebKit
         self.commandDelegate.send(result, callbackId: command.callbackId)
     }
 
-    @objc(start:)
-    func start(command: CDVInvokedUrlCommand) {
-        guard let appId = command.argument(at: 0) as? String,
-            let domainArray = command.argument(at: 1) as? [String]
-        else {
-            let result = CDVPluginResult(status: .error, messageAs: "Missing appId or domains")
-            self.commandDelegate.send(result, callbackId: command.callbackId)
-            return
-        }
-
-        let domains: Set<String> = Set(domainArray)
-
-        DispatchQueue.main.async {
-            let policy = HSPolicy()
-
-            policy.hybridAppPolicy.set(webRootDomains: domains, forAppId: appId)
-            policy.hybridAppPolicy.supportExternalWebViews = true
-            policy.hybridAppPolicy.automaticSetup = true
-
-            policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
-
-            do {
-                try HumanSecurity.start(appId: appId, policy: policy)
-                print(
-                    "[HumanSecurityPlugin] SDK started with appId: \(appId) and domains: \(domains)"
-                )
-                let result = CDVPluginResult(status: .ok)
-                self.commandDelegate.send(result, callbackId: command.callbackId)
-            } catch {
-                print("[HumanSecurityPlugin] SDK start failed: \(error.localizedDescription)")
-                let result = CDVPluginResult(status: .error, messageAs: error.localizedDescription)
-                self.commandDelegate.send(result, callbackId: command.callbackId)
-            }
-        }
-    }
-
     @objc(setUserId:)
     func setUserId(command: CDVInvokedUrlCommand) {
         guard let userId = command.argument(at: 0) as? String,
