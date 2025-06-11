@@ -7,6 +7,10 @@ var HumanSecurityPlugin = {
 
   getHeaders: function (appId, success, error) {
     exec(success, error, 'HumanSecurityPlugin', 'getHeaders', [appId]);
+  },
+
+  handleResponse: function (responseString, success, error) {
+    exec(success, error, 'HumanSecurityPlugin', 'handleResponse', [responseString]);
   }
 };
 
