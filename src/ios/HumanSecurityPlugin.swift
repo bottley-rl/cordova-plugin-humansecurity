@@ -17,15 +17,20 @@ import WebKit
 
         DispatchQueue.main.async {
             let policy = HSPolicy()
+
             policy.hybridAppPolicy.set(webRootDomains: domains, forAppId: appId)
             policy.hybridAppPolicy.supportExternalWebViews = true
+            policy.hybridAppPolicy.automaticSetup = true
+
             policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
 
             do {
                 try HumanSecurity.start(appId: appId, policy: policy)
+                print("[HumanSecurityPlugin] SDK started with appId: \(appId) and domains: \(domains)")
                 let result = CDVPluginResult(status: .ok)
                 self.commandDelegate.send(result, callbackId: command.callbackId)
             } catch {
+                print("[HumanSecurityPlugin] SDK start failed: \(error.localizedDescription)")
                 let result = CDVPluginResult(status: .error, messageAs: error.localizedDescription)
                 self.commandDelegate.send(result, callbackId: command.callbackId)
             }
@@ -43,9 +48,11 @@ import WebKit
 
         do {
             try HumanSecurity.AD.setUserId(userId: userId, forAppId: appId)
+            print("[HumanSecurityPlugin] Set user ID: \(userId) for appId: \(appId)")
             let result = CDVPluginResult(status: .ok)
             self.commandDelegate.send(result, callbackId: command.callbackId)
         } catch {
+            print("[HumanSecurityPlugin] setUserId failed: \(error.localizedDescription)")
             let result = CDVPluginResult(status: .error, messageAs: error.localizedDescription)
             self.commandDelegate.send(result, callbackId: command.callbackId)
         }
