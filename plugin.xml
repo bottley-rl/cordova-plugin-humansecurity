@@ -5,13 +5,17 @@
   <license>MIT</license>
   <platform name="ios">
   <source-file src="src/ios/HumanSecurityPlugin.swift" />
+  
   <header-file src="src/ios/HumanSecurity-Bridging-Header.h" />
+
   <config-file target="build.xcconfig" parent="SWIFT_VERSION">
     <string>5.0</string>
   </config-file>
+
   <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
     <string>HumanSecurity requires camera access to complete anti-bot challenges.</string>
   </config-file>
+
   <config-file target="build.xcconfig" parent="SWIFT_OBJC_BRIDGING_HEADER">
     <string>$(PROJECT_DIR)/$(PROJECT_NAME)/src/ios/HumanSecurity-Bridging-Header.h</string>
   </config-file>

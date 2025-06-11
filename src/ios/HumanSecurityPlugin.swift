@@ -1,7 +1,6 @@
 import Foundation
 import HUMAN
 import WebKit
-import Cordova
 
 @objc(HumanSecurityPlugin) class HumanSecurityPlugin: CDVPlugin {
 
