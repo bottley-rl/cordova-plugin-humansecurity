@@ -10,8 +10,9 @@ class HumanSecurityPlugin: CDVPlugin {
 
     override func pluginInitialize() {
         guard
-            let appId = self.commandDelegate.settings["HUMAN_APP_ID"] as? String,
-            let domainString = self.commandDelegate.settings["HUMAN_DOMAINS"] as? String
+            let viewController = self.viewController as? CDVViewController,
+            let appId = viewController.settings["HUMAN_APP_ID"] as? String,
+            let domainString = viewController.settings["HUMAN_DOMAINS"] as? String
         else {
             print("[HumanSecurityPlugin] Missing plugin variables: HUMAN_APP_ID and/or HUMAN_DOMAINS")
             return
