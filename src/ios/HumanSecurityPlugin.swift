@@ -10,20 +10,17 @@ class HumanSecurityPlugin: CDVPlugin {
 
     override func pluginInitialize() {
 
-        let settings = self.commandDelegate?.settings
-        print("[HumanSecurityPlugin] Settings: \(String(describing: settings))")
+        guard let settings = self.commandDelegate?.settings else {
+            print("[HumanSecurityPlugin] Unable to retrieve plugin settings.")
+            return
+        }
 
-        let resolvedAppId = self.commandDelegate.settings["HUMAN_APP_ID"] as? String
-        let resolvedDomains = self.commandDelegate.settings["HUMAN_DOMAINS"] as? String
-
-        let fallbackAppId = "PXxTfdm2W9"
-        let fallbackDomainString = ".rocketlawyer.com"
-
-        let appId = resolvedAppId ?? fallbackAppId
-        let domainString = resolvedDomains ?? fallbackDomainString
-
-        if resolvedAppId == nil || resolvedDomains == nil {
-            print("[HumanSecurityPlugin] Missing plugin preferences. Using fallback values.")
+        guard
+            let appId = settings["human_app_id"] as? String,
+            let domainString = settings["human_domains"] as? String
+        else {
+            print("[HumanSecurityPlugin] Missing plugin preferences: human_app_id and/or human_domains")
+            return
         }
 
         self.appId = appId
