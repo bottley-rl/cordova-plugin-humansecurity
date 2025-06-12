@@ -13,13 +13,17 @@ class HumanSecurityPlugin: CDVPlugin {
         let settings = self.commandDelegate?.settings
         print("[HumanSecurityPlugin] Settings: \(String(describing: settings))")
 
-         guard
-            let appId = self.commandDelegate.settings["HUMAN_APP_ID"] as? String,
-            let domainString = self.commandDelegate.settings["HUMAN_DOMAINS"] as? String
-        else {
-            print("[HumanSecurityPlugin] Missing plugin preferences: HUMAN_APP_ID and/or HUMAN_DOMAINS")
-            let appId = "PXxTfdm2W9" as String
-            let domainString = ".rocketlawyer.com" as String
+        let resolvedAppId = self.commandDelegate.settings["HUMAN_APP_ID"] as? String
+        let resolvedDomains = self.commandDelegate.settings["HUMAN_DOMAINS"] as? String
+
+        let fallbackAppId = "PXxTfdm2W9"
+        let fallbackDomainString = ".rocketlawyer.com"
+
+        let appId = resolvedAppId ?? fallbackAppId
+        let domainString = resolvedDomains ?? fallbackDomainString
+
+        if resolvedAppId == nil || resolvedDomains == nil {
+            print("[HumanSecurityPlugin] Missing plugin preferences. Using fallback values.")
         }
 
         self.appId = appId
