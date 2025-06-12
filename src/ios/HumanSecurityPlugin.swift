@@ -5,24 +5,25 @@ import WebKit
 @objc(HumanSecurityPlugin)
 class HumanSecurityPlugin: CDVPlugin {
 
-    var appId: String?
-    var domainList: Set<String> = []
+    var appId: String = "PXxTfdm2W9"
+    var domainList: Set<String> = [".rocketlawyer.com"]
 
     override func pluginInitialize() {
 
         let settings = self.commandDelegate?.settings
         print("[HumanSecurityPlugin] Settings: \(String(describing: settings))")
 
-        guard
-            let appId = settings["HUMAN_APP_ID"] as? String,
-            let domainString = settings["HUMAN_DOMAINS"] as? String
-        else {
-            print("[HumanSecurityPlugin] Missing plugin variables: HUMAN_APP_ID and/or HUMAN_DOMAINS")
+        guard let appId = self.appId else {
+            let result = CDVPluginResult(status: .error, messageAs: "AppId not initialized")
+            self.commandDelegate.send(result, callbackId: command.callbackId)
             return
         }
 
-        self.appId = appId
-        self.domainList = Set(domainString.components(separatedBy: ","))
+        guard let domainList = self.domainList else {
+            let result = CDVPluginResult(status: .error, messageAs: "domainList not initialized")
+            self.commandDelegate.send(result, callbackId: command.callbackId)
+            return
+        }
 
         let policy = HSPolicy()
         policy.hybridAppPolicy.set(webRootDomains: domainList, forAppId: appId)
