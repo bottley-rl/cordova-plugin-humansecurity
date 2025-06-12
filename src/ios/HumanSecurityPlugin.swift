@@ -13,6 +13,7 @@ import WebKit
         policy.hybridAppPolicy.supportExternalWebViews = true
         policy.hybridAppPolicy.automaticSetup = true
         policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
+        policy.doctorAppPolicy.enabled = true
 
         HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 10
 
