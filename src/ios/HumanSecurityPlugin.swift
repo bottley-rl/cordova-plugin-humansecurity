@@ -18,8 +18,8 @@ class HumanSecurityPlugin: CDVPlugin {
             let domainString = self.commandDelegate.settings["HUMAN_DOMAINS"] as? String
         else {
             print("[HumanSecurityPlugin] Missing plugin preferences: HUMAN_APP_ID and/or HUMAN_DOMAINS")
-            appId = "PXxTfdm2W9"
-            domainString = ".rocketlawyer.com"
+            let appId = "PXxTfdm2W9" as String
+            let domainString = ".rocketlawyer.com" as String
         }
 
         self.appId = appId
