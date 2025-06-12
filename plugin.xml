@@ -4,6 +4,9 @@
   <description>Integrate Human Security into a Cordova iOS app</description>
   <license>MIT</license>
   <platform name="ios">
+  <preference name="HUMAN_APP_ID" />
+  <preference name="HUMAN_DOMAINS" />
+
   <source-file src="src/ios/HumanSecurityPlugin.swift" />
   
   <header-file src="src/ios/HumanSecurity-Bridging-Header.h" />

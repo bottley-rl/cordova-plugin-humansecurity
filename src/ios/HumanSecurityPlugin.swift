@@ -2,14 +2,26 @@ import Foundation
 import HUMAN
 import WebKit
 
-@objc(HumanSecurityPlugin) class HumanSecurityPlugin: CDVPlugin {
+@objc(HumanSecurityPlugin)
+class HumanSecurityPlugin: CDVPlugin {
+
+    var appId: String?
+    var domainList: Set<String> = []
 
     override func pluginInitialize() {
-        let appId: String = "PXxTfdm2W9"
-        let domains: Set<String> = Set([".rocketlawyer.com"])
+        guard
+            let appId = self.commandDelegate.settings["HUMAN_APP_ID"] as? String,
+            let domainString = self.commandDelegate.settings["HUMAN_DOMAINS"] as? String
+        else {
+            print("[HumanSecurityPlugin] Missing plugin variables: HUMAN_APP_ID and/or HUMAN_DOMAINS")
+            return
+        }
+
+        self.appId = appId
+        self.domainList = Set(domainString.components(separatedBy: ","))
 
         let policy = HSPolicy()
-        policy.hybridAppPolicy.set(webRootDomains: domains, forAppId: appId)
+        policy.hybridAppPolicy.set(webRootDomains: domainList, forAppId: appId)
         policy.hybridAppPolicy.supportExternalWebViews = true
         policy.hybridAppPolicy.automaticSetup = true
         policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
@@ -17,21 +29,22 @@ import WebKit
 
         HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 10
 
-        do {
-            try HumanSecurity.start(appId: appId, policy: policy)
-            print("Human SDK initialized early via pluginInitialize")
+        DispatchQueue.main.async {
+            do {
+                try HumanSecurity.start(appId: appId, policy: policy)
+                print("[HumanSecurityPlugin] Human SDK initialized with appId: \(appId)")
 
-            if let wkWebView = findWKWebView(in: self.webView?.superview) {
-                HumanSecurity.setupWebView(
-                    webView: wkWebView, navigationDelegate: wkWebView.navigationDelegate)
-                print("Human SDK Manually called setupWebView")
+                if let wkWebView = self.findWKWebView(in: self.webView?.superview) {
+                    HumanSecurity.setupWebView(webView: wkWebView, navigationDelegate: wkWebView.navigationDelegate)
+                    print("[HumanSecurityPlugin] setupWebView called")
+                }
+            } catch {
+                print("[HumanSecurityPlugin] SDK start failed: \(error.localizedDescription)")
             }
-        } catch {
-            print("Human SDK failed to initialize: \(error.localizedDescription)")
         }
     }
 
-    func findWKWebView(in view: UIView?) -> WKWebView? {
+    private func findWKWebView(in view: UIView?) -> WKWebView? {
         if let wk = view as? WKWebView {
             return wk
         }
@@ -45,8 +58,8 @@ import WebKit
 
     @objc(getHeaders:)
     func getHeaders(command: CDVInvokedUrlCommand) {
-        guard let appId = command.argument(at: 0) as? String else {
-            let result = CDVPluginResult(status: .error, messageAs: "Missing appId")
+        guard let appId = self.appId else {
+            let result = CDVPluginResult(status: .error, messageAs: "AppId not initialized")
             self.commandDelegate.send(result, callbackId: command.callbackId)
             return
         }
@@ -58,23 +71,20 @@ import WebKit
 
     @objc(handleResponse:)
     func handleResponse(command: CDVInvokedUrlCommand) {
-        guard let responseString = command.argument(at: 0) as? String,
-            let data = responseString.data(using: .utf8),
-            let httpResponse = HTTPURLResponse(
-                url: URL(string: "https://www.google.com")!,  // Not used - just a placeholder
-                statusCode: 403,
-                httpVersion: nil,
-                headerFields: [:]
-            )
+        guard
+            let responseString = command.argument(at: 0) as? String,
+            let data = responseString.data(using: .utf8)
         else {
             let result = CDVPluginResult(status: .error, messageAs: "Invalid input")
             self.commandDelegate.send(result, callbackId: command.callbackId)
             return
         }
 
-        let wasHandled = HumanSecurity.BD.handleResponse(response: httpResponse, data: data) {
-            result in
-            print("[HumanSecurity] Challenge result: \(result)")
+        let placeholderUrl = URL(string: "https://placeholder.com")!
+        let httpResponse = HTTPURLResponse(url: placeholderUrl, statusCode: 403, httpVersion: nil, headerFields: [:])!
+
+        let wasHandled = HumanSecurity.BD.handleResponse(response: httpResponse, data: data) { challengeResult in
+            print("[HumanSecurityPlugin] Challenge result: \(challengeResult)")
         }
 
         let result = CDVPluginResult(status: .ok, messageAs: wasHandled)
@@ -83,8 +93,9 @@ import WebKit
 
     @objc(setUserId:)
     func setUserId(command: CDVInvokedUrlCommand) {
-        guard let userId = command.argument(at: 0) as? String,
-            let appId = command.argument(at: 1) as? String
+        guard
+            let userId = command.argument(at: 0) as? String,
+            let appId = self.appId
         else {
             let result = CDVPluginResult(status: .error, messageAs: "Missing userId or appId")
             self.commandDelegate.send(result, callbackId: command.callbackId)
