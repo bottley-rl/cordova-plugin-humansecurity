@@ -25,7 +25,7 @@ class HumanSecurityPlugin: CDVPlugin {
         policy.hybridAppPolicy.supportExternalWebViews = true
         policy.hybridAppPolicy.automaticSetup = true
         policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
-        policy.doctorAppPolicy.enabled = true
+        policy.doctorAppPolicy.enabled = false // Enable to verify SDK
 
         HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 10
 
