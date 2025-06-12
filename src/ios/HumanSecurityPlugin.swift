@@ -33,17 +33,17 @@ class HumanSecurityPlugin: CDVPlugin {
         policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
         policy.doctorAppPolicy.enabled = false // Enable to verify SDK
 
-        HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 10
+        HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 3
 
-        DispatchQueue.main.async {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             do {
                 try HumanSecurity.start(appId: appId, policy: policy)
                 print("[HumanSecurityPlugin] Human SDK initialized with appId: \(appId)")
 
-                if let wkWebView = self.findWKWebView(in: self.webView?.superview) {
-                    HumanSecurity.setupWebView(webView: wkWebView, navigationDelegate: wkWebView.navigationDelegate)
-                    print("[HumanSecurityPlugin] setupWebView called")
-                }
+                // if let wkWebView = self.findWKWebView(in: self.webView?.superview) {
+                //     HumanSecurity.setupWebView(webView: wkWebView, navigationDelegate: wkWebView.navigationDelegate)
+                //     print("[HumanSecurityPlugin] setupWebView called")
+                // }
             } catch {
                 print("[HumanSecurityPlugin] SDK start failed: \(error.localizedDescription)")
             }
