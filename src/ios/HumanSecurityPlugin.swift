@@ -9,10 +9,13 @@ class HumanSecurityPlugin: CDVPlugin {
     var domainList: Set<String> = []
 
     override func pluginInitialize() {
+
+        let settings = self.commandDelegate?.settings
+        print("[HumanSecurityPlugin] Settings: \(String(describing: settings))")
+
         guard
-            let viewController = self.viewController as? CDVViewController,
-            let appId = viewController.settings["HUMAN_APP_ID"] as? String,
-            let domainString = viewController.settings["HUMAN_DOMAINS"] as? String
+            let appId = settings["HUMAN_APP_ID"] as? String,
+            let domainString = settings["HUMAN_DOMAINS"] as? String
         else {
             print("[HumanSecurityPlugin] Missing plugin variables: HUMAN_APP_ID and/or HUMAN_DOMAINS")
             return
