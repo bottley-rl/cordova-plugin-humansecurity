@@ -9,15 +9,9 @@ class HumanSecurityPlugin: CDVPlugin {
     var domainList: Set<String> = []
 
     override func pluginInitialize() {
-
-        guard let settings = self.commandDelegate?.settings else {
-            print("[HumanSecurityPlugin] Unable to retrieve plugin settings.")
-            return
-        }
-
         guard
-            let appId = settings["human_app_id"] as? String,
-            let domainString = settings["human_domains"] as? String
+            let appId = self.commandDelegate?.settings["human_app_id"] as? String,
+            let domainString = self.commandDelegate?.settings["human_domains"] as? String
         else {
             print("[HumanSecurityPlugin] Missing plugin preferences: human_app_id and/or human_domains")
             return
@@ -31,7 +25,7 @@ class HumanSecurityPlugin: CDVPlugin {
         policy.hybridAppPolicy.supportExternalWebViews = true
         policy.hybridAppPolicy.automaticSetup = true
         policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
-        policy.doctorAppPolicy.enabled = false // Enable to verify SDK
+        policy.doctorAppPolicy.enabled = true // Enable to verify SDK
 
         HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 3
 
@@ -39,27 +33,10 @@ class HumanSecurityPlugin: CDVPlugin {
             do {
                 try HumanSecurity.start(appId: appId, policy: policy)
                 print("[HumanSecurityPlugin] Human SDK initialized with appId: \(appId)")
-
-                // if let wkWebView = self.findWKWebView(in: self.webView?.superview) {
-                //     HumanSecurity.setupWebView(webView: wkWebView, navigationDelegate: wkWebView.navigationDelegate)
-                //     print("[HumanSecurityPlugin] setupWebView called")
-                // }
             } catch {
                 print("[HumanSecurityPlugin] SDK start failed: \(error.localizedDescription)")
             }
         }
-    }
-
-    private func findWKWebView(in view: UIView?) -> WKWebView? {
-        if let wk = view as? WKWebView {
-            return wk
-        }
-        for subview in view?.subviews ?? [] {
-            if let wk = findWKWebView(in: subview) {
-                return wk
-            }
-        }
-        return nil
     }
 
     @objc(getHeaders:)

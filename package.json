@@ -1,13 +1,13 @@
 {
     "name": "cordova-plugin-humansecurity",
     "version": "1.0.0",
-    "description": "Cordova plugin for integrating Human Security into hybrid apps",
+    "description": "Cordova plugin for integrating Human Security into hybrid Apps",
     "cordova": {
       "id": "cordova-plugin-humansecurity",
       "platforms": ["ios"]
     },
     "keywords": ["cordova", "plugin", "humansecurity"],
-    "author": "Your Name",
+    "author": "Rocket Lawyer",
     "license": "MIT"
   }
   

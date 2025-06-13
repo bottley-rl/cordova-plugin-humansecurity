@@ -1,28 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin id="cordova-plugin-humansecurity" version="1.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0">
   <name>HumanSecurityPlugin</name>
-  <description>Integrate Human Security into a Cordova iOS app</description>
+  <description>Cordova plugin for integrating Human Security into hybrid Apps</description>
   <license>MIT</license>
   <platform name="ios">
   <source-file src="src/ios/HumanSecurityPlugin.swift" />
   <header-file src="src/ios/HumanSecurity-Bridging-Header.h" />
-  <config-file target="config.xml" parent="/*">
-    <preference name="HUMAN_APP_ID" value="$HUMAN_APP_ID" />
-    <preference name="HUMAN_DOMAINS" value="$HUMAN_DOMAINS" />
-  </config-file>
+
+  <js-module src="www/HumanSecurityPlugin.js" name="HumanSecurityPlugin">
+    <clobbers target="plugins.HumanSecurity" />
+  </js-module>
+
   <podspec>
     <pods use-frameworks="true">
       <pod name="HUMAN" spec="~> 4.0" />
     </pods>
   </podspec>
+
+  <config-file target="config.xml" parent="/*">
+    <preference name="HUMAN_APP_ID" value="$HUMAN_APP_ID" />
+    <preference name="HUMAN_DOMAINS" value="$HUMAN_DOMAINS" />
+  </config-file>
+
+  <config-file target="build.xcconfig" parent="SWIFT_VERSION">
+      <string>5.0</string>
+  </config-file>
+
+  <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
+    <string>HumanSecurity requires camera access to complete anti-bot challenges.</string>
+  </config-file>
+
+  <config-file target="build.xcconfig" parent="SWIFT_OBJC_BRIDGING_HEADER">
+    <string>$(PROJECT_DIR)/$(PROJECT_NAME)/src/ios/HumanSecurity-Bridging-Header.h</string>
+  </config-file>
+
   <config-file parent="/*" target="config.xml">
     <feature name="HumanSecurityPlugin">
       <param name="ios-package" value="HumanSecurityPlugin" />
       <param name="onload" value="true" />
     </feature>
   </config-file>
-  <js-module src="www/HumanSecurityPlugin.js" name="HumanSecurityPlugin">
-    <clobbers target="plugins.HumanSecurity" />
-  </js-module>
+  
 </platform>
 </plugin>
