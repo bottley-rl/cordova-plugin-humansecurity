@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin id="cordova-plugin-humansecurity" version="1.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0">
+  
   <name>HumanSecurityPlugin</name>
+  
   <description>Cordova plugin for integrating Human Security into hybrid Apps</description>
+  
   <license>MIT</license>
+
   <platform name="ios">
   <source-file src="src/ios/HumanSecurityPlugin.swift" />
   <header-file src="src/ios/HumanSecurity-Bridging-Header.h" />
@@ -22,16 +26,8 @@
     <preference name="HUMAN_DOMAINS" value="$HUMAN_DOMAINS" />
   </config-file>
 
-  <config-file target="build.xcconfig" parent="SWIFT_VERSION">
-      <string>5.0</string>
-  </config-file>
-
   <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
     <string>HumanSecurity requires camera access to complete anti-bot challenges.</string>
-  </config-file>
-
-  <config-file target="build.xcconfig" parent="SWIFT_OBJC_BRIDGING_HEADER">
-    <string>$(PROJECT_DIR)/$(PROJECT_NAME)/src/ios/HumanSecurity-Bridging-Header.h</string>
   </config-file>
 
   <config-file parent="/*" target="config.xml">
@@ -40,6 +36,5 @@
       <param name="onload" value="true" />
     </feature>
   </config-file>
-  
 </platform>
 </plugin>
