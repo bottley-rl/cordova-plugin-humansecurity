@@ -20,21 +20,49 @@ class HumanSecurityPlugin: CDVPlugin {
         self.appId = appId
         self.domainList = Set(domainString.components(separatedBy: ","))
 
+        // let policy = HSPolicy()
+        // policy.hybridAppPolicy.set(webRootDomains: domainList, forAppId: appId)
+        // policy.hybridAppPolicy.supportExternalWebViews = true
+        // policy.hybridAppPolicy.automaticSetup = false
+        // policy.automaticInterceptorPolicy.interceptorType = .none
+        // policy.doctorAppPolicy.enabled = false // Enable to verify SDK
+
+        // HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 3
+
+        // DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        //     do {
+        //         try HumanSecurity.start(appId: appId, policy: policy)
+        //         print("[HumanSecurityPlugin] Human SDK initialized with appId: \(appId)")
+        //     } catch {
+        //         print("[HumanSecurityPlugin] SDK start failed: \(error.localizedDescription)")
+        //     }
+        // }
+    }
+
+    @objc(start:)
+    func start(command: CDVInvokedUrlCommand) {
+        guard let appId = self.appId, let domainList = self.domainList else {
+            let result = CDVPluginResult(status: .error, messageAs: "AppId or domainList not initialized")
+            self.commandDelegate.send(result, callbackId: command.callbackId)
+            return
+        }
+
         let policy = HSPolicy()
         policy.hybridAppPolicy.set(webRootDomains: domainList, forAppId: appId)
         policy.hybridAppPolicy.supportExternalWebViews = true
-        policy.hybridAppPolicy.automaticSetup = false
-        policy.automaticInterceptorPolicy.interceptorType = .none
-        policy.doctorAppPolicy.enabled = false // Enable to verify SDK
+        policy.hybridAppPolicy.automaticSetup = true
+        policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
 
         HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 3
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        DispatchQueue.main.async {
             do {
                 try HumanSecurity.start(appId: appId, policy: policy)
-                print("[HumanSecurityPlugin] Human SDK initialized with appId: \(appId)")
+                let result = CDVPluginResult(status: .ok)
+                self.commandDelegate.send(result, callbackId: command.callbackId)
             } catch {
-                print("[HumanSecurityPlugin] SDK start failed: \(error.localizedDescription)")
+                let result = CDVPluginResult(status: .error, messageAs: error.localizedDescription)
+                self.commandDelegate.send(result, callbackId: command.callbackId)
             }
         }
     }
