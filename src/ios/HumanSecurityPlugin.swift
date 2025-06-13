@@ -23,8 +23,8 @@ class HumanSecurityPlugin: CDVPlugin {
         let policy = HSPolicy()
         policy.hybridAppPolicy.set(webRootDomains: domainList, forAppId: appId)
         policy.hybridAppPolicy.supportExternalWebViews = true
-        policy.hybridAppPolicy.automaticSetup = true
-        policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
+        policy.hybridAppPolicy.automaticSetup = false
+        policy.automaticInterceptorPolicy.interceptorType = .none
         policy.doctorAppPolicy.enabled = false // Enable to verify SDK
 
         HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 3
