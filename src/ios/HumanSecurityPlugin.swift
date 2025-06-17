@@ -1,12 +1,11 @@
 import Foundation
 import HUMAN
-import WebKit
 
 @objc(HumanSecurityPlugin)
 class HumanSecurityPlugin: CDVPlugin {
 
     var appId: String?
-    var domainList: Set<String>?
+    var domainList: Set<String> = []
 
     override func pluginInitialize() {
         guard
@@ -26,6 +25,8 @@ class HumanSecurityPlugin: CDVPlugin {
         policy.hybridAppPolicy.automaticSetup = true
         policy.hybridAppPolicy.allowJavaScriptEvaluation = false
 
+        policy.doctorAppPolicy.enabled = true
+
         policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
 
         HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 3
@@ -33,41 +34,42 @@ class HumanSecurityPlugin: CDVPlugin {
         DispatchQueue.main.async {
             do {
                 try HumanSecurity.start(appId: appId, policy: policy)
+                print("[HumanSecurityPlugin] Human SDK initialized with appId: \(appId)")
             } catch {
                 print("[HumanSecurityPlugin] Failed to Start: \(error.localizedDescription)")
             }
         }
     }
 
-    @objc(start:)
-    func start(command: CDVInvokedUrlCommand) {
-        guard let appId = self.appId, let domainList = self.domainList else {
-            let result = CDVPluginResult(status: .error, messageAs: "AppId or domainList not initialized")
-            self.commandDelegate.send(result, callbackId: command.callbackId)
-            return
-        }
+    // @objc(start:)
+    // func start(command: CDVInvokedUrlCommand) {
+    //     guard let appId = self.appId, let domainList = self.domainList else {
+    //         let result = CDVPluginResult(status: .error, messageAs: "AppId or domainList not initialized")
+    //         self.commandDelegate.send(result, callbackId: command.callbackId)
+    //         return
+    //     }
 
-        let policy = HSPolicy()
-        policy.hybridAppPolicy.set(webRootDomains: domainList, forAppId: appId)
-        policy.hybridAppPolicy.supportExternalWebViews = true
-        policy.hybridAppPolicy.automaticSetup = true
-        policy.hybridAppPolicy.allowJavaScriptEvaluation = false
+    //     let policy = HSPolicy()
+    //     policy.hybridAppPolicy.set(webRootDomains: domainList, forAppId: appId)
+    //     policy.hybridAppPolicy.supportExternalWebViews = true
+    //     policy.hybridAppPolicy.automaticSetup = true
+    //     policy.hybridAppPolicy.allowJavaScriptEvaluation = false
 
-        policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
+    //     policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
 
-        HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 3
+    //     HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 3
 
-        DispatchQueue.main.async {
-            do {
-                try HumanSecurity.start(appId: appId, policy: policy)
-                let result = CDVPluginResult(status: .ok)
-                self.commandDelegate.send(result, callbackId: command.callbackId)
-            } catch {
-                let result = CDVPluginResult(status: .error, messageAs: error.localizedDescription)
-                self.commandDelegate.send(result, callbackId: command.callbackId)
-            }
-        }
-    }
+    //     DispatchQueue.main.async {
+    //         do {
+    //             try HumanSecurity.start(appId: appId, policy: policy)
+    //             let result = CDVPluginResult(status: .ok)
+    //             self.commandDelegate.send(result, callbackId: command.callbackId)
+    //         } catch {
+    //             let result = CDVPluginResult(status: .error, messageAs: error.localizedDescription)
+    //             self.commandDelegate.send(result, callbackId: command.callbackId)
+    //         }
+    //     }
+    // }
 
     @objc(getHeaders:)
     func getHeaders(command: CDVInvokedUrlCommand) {
