@@ -17,7 +17,10 @@
         policy.hybridAppPolicy.automaticSetup = YES;
         policy.hybridAppPolicy.supportExternalWebViews = YES;
         policy.hybridAppPolicy.allowJavaScriptEvaluation = NO;
-        policy.automaticInterceptorPolicy.interceptorType = HSInterceptorTypeInterceptWithDelayedResponse;
+
+        policy.automaticInterceptorPolicy.interceptorType = HSAutomaticInterceptorTypeInterceptWithDelayedResponse;
+        HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 3;
+
         policy.doctorAppPolicy.enabled = YES;
 
         [HumanSecurity startWithAppId:@"PXxTfdm2W9" policy:policy error:nil];
