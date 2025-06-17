@@ -33,6 +33,8 @@ class HumanSecurityPlugin: CDVPlugin {
         policy.hybridAppPolicy.set(webRootDomains: domainList, forAppId: appId)
         policy.hybridAppPolicy.supportExternalWebViews = true
         policy.hybridAppPolicy.automaticSetup = true
+        policy.hybridAppPolicy.allowJavaScriptEvaluation = false
+
         policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
 
         HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 3
