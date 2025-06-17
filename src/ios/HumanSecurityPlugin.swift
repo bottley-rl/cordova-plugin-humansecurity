@@ -19,57 +19,68 @@ class HumanSecurityPlugin: CDVPlugin {
         self.appId = appId
         self.domainList = Set(domainString.components(separatedBy: ","))
 
-        let policy = HSPolicy()
-        policy.hybridAppPolicy.set(webRootDomains: domainList, forAppId: appId)
-        policy.hybridAppPolicy.supportExternalWebViews = true
-        policy.hybridAppPolicy.automaticSetup = true
-        policy.hybridAppPolicy.allowJavaScriptEvaluation = false
+        startHumanSDK()
+    }
 
-        policy.doctorAppPolicy.enabled = true
+    @objc(start:)
+    func start(command: CDVInvokedUrlCommand) {
+        guard let appId = self.appId, let domainList = self.domainList else {
+            let result = CDVPluginResult(status: .error, messageAs: "AppId or domainList not initialized")
+            self.commandDelegate.send(result, callbackId: command.callbackId)
+            return
+        }
 
-        policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
+        startHumanSDK()
 
-        HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 3
+        let result = CDVPluginResult(status: .ok)
+        self.commandDelegate.send(result, callbackId: command.callbackId)
+    }
 
-        DispatchQueue.main.async {
-            do {
-                try HumanSecurity.start(appId: appId, policy: policy)
-                print("[HumanSecurityPlugin] Human SDK initialized with appId: \(appId)")
-            } catch {
-                print("[HumanSecurityPlugin] Failed to Start: \(error.localizedDescription)")
+   func startHumanSDK() {
+        do {
+            let policy = HSPolicy()
+            policy.hybridAppPolicy.set(webRootDomains: domainList, forAppId: appId)
+            policy.hybridAppPolicy.supportExternalWebViews = true
+            policy.hybridAppPolicy.automaticSetup = false
+            policy.hybridAppPolicy.allowJavaScriptEvaluation = false
+
+            policy.doctorAppPolicy.enabled = true
+
+            policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
+
+            HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 10
+
+            DispatchQueue.main.async {
+                do {
+                    try HumanSecurity.start(appId: appId, policy: policy)
+                    print("[HumanSecurityPlugin] Human SDK initialized with appId: \(appId)")
+
+                    if let wkWebView = self.findWKWebView(in: self.webView?.superview) {
+                        HumanSecurity.setupWebView(webView: wkWebView, navigationDelegate: wkWebView.navigationDelegate)
+                        print("[HumanSecurityPlugin] setupWebView called")
+                    } else {
+                        print("[HumanSecurityPlugin] Failed to find WKWebView")
+                    }
+                } catch {
+                    print("[HumanSecurityPlugin] Failed to Start: \(error.localizedDescription)")
+                }
             }
+        } catch {
+            print("[HumanSecurityPlugin] Start Error: \(error)")
         }
     }
 
-    // @objc(start:)
-    // func start(command: CDVInvokedUrlCommand) {
-    //     guard let appId = self.appId, let domainList = self.domainList else {
-    //         let result = CDVPluginResult(status: .error, messageAs: "AppId or domainList not initialized")
-    //         self.commandDelegate.send(result, callbackId: command.callbackId)
-    //         return
-    //     }
-
-    //     let policy = HSPolicy()
-    //     policy.hybridAppPolicy.set(webRootDomains: domainList, forAppId: appId)
-    //     policy.hybridAppPolicy.supportExternalWebViews = true
-    //     policy.hybridAppPolicy.automaticSetup = true
-    //     policy.hybridAppPolicy.allowJavaScriptEvaluation = false
-
-    //     policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
-
-    //     HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 3
-
-    //     DispatchQueue.main.async {
-    //         do {
-    //             try HumanSecurity.start(appId: appId, policy: policy)
-    //             let result = CDVPluginResult(status: .ok)
-    //             self.commandDelegate.send(result, callbackId: command.callbackId)
-    //         } catch {
-    //             let result = CDVPluginResult(status: .error, messageAs: error.localizedDescription)
-    //             self.commandDelegate.send(result, callbackId: command.callbackId)
-    //         }
-    //     }
-    // }
+    func findWKWebView(in view: UIView?) -> WKWebView? {
+        if let wk = view as? WKWebView {
+            return wk
+        }
+        for subview in view?.subviews ?? [] {
+            if let wk = findWKWebView(in: subview) {
+                return wk
+            }
+        }
+        return nil
+    }
 
     @objc(getHeaders:)
     func getHeaders(command: CDVInvokedUrlCommand) {

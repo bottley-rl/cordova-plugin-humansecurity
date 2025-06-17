@@ -26,10 +26,6 @@
     <preference name="HUMAN_DOMAINS" value="$HUMAN_DOMAINS" />
   </config-file>
 
-  <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
-    <string>HumanSecurity requires camera access to complete anti-bot challenges.</string>
-  </config-file>
-
   <config-file parent="/*" target="config.xml">
     <feature name="HumanSecurityPlugin">
       <param name="ios-package" value="HumanSecurityPlugin" />
