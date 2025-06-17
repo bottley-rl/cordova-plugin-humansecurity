@@ -19,6 +19,24 @@ class HumanSecurityPlugin: CDVPlugin {
 
         self.appId = appId
         self.domainList = Set(domainString.components(separatedBy: ","))
+
+        let policy = HSPolicy()
+        policy.hybridAppPolicy.set(webRootDomains: domainList, forAppId: appId)
+        policy.hybridAppPolicy.supportExternalWebViews = true
+        policy.hybridAppPolicy.automaticSetup = true
+        policy.hybridAppPolicy.allowJavaScriptEvaluation = false
+
+        policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
+
+        HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 3
+
+        DispatchQueue.main.async {
+            do {
+                try HumanSecurity.start(appId: appId, policy: policy)
+            } catch {
+                print("[HumanSecurityPlugin] Failed to Start: \(error.localizedDescription)")
+            }
+        }
     }
 
     @objc(start:)
