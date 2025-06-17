@@ -18,7 +18,6 @@ var HumanSecurityPlugin = {
   }
 };
 
-// Attach to window.plugins if available
 if (!window.plugins) {
   window.plugins = {};
 }

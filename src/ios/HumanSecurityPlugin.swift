@@ -6,7 +6,7 @@ import WebKit
 class HumanSecurityPlugin: CDVPlugin {
 
     var appId: String?
-    var domainList: Set<String> = []
+    var domainList: Set<String>?
 
     override func pluginInitialize() {
         guard
@@ -19,24 +19,6 @@ class HumanSecurityPlugin: CDVPlugin {
 
         self.appId = appId
         self.domainList = Set(domainString.components(separatedBy: ","))
-
-        // let policy = HSPolicy()
-        // policy.hybridAppPolicy.set(webRootDomains: domainList, forAppId: appId)
-        // policy.hybridAppPolicy.supportExternalWebViews = true
-        // policy.hybridAppPolicy.automaticSetup = false
-        // policy.automaticInterceptorPolicy.interceptorType = .none
-        // policy.doctorAppPolicy.enabled = false // Enable to verify SDK
-
-        // HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 3
-
-        // DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-        //     do {
-        //         try HumanSecurity.start(appId: appId, policy: policy)
-        //         print("[HumanSecurityPlugin] Human SDK initialized with appId: \(appId)")
-        //     } catch {
-        //         print("[HumanSecurityPlugin] SDK start failed: \(error.localizedDescription)")
-        //     }
-        // }
     }
 
     @objc(start:)
