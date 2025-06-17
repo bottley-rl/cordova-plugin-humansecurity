@@ -11,6 +11,9 @@
   <source-file src="src/ios/HumanSecurityPlugin.swift" />
   <header-file src="src/ios/HumanSecurity-Bridging-Header.h" />
 
+  <source-file src="src/ios/AppDelegate+HumanSecurity.m" />
+  <header-file src="src/ios/AppDelegate+HumanSecurity.h" />
+
   <js-module src="www/HumanSecurityPlugin.js" name="HumanSecurityPlugin">
     <clobbers target="plugins.HumanSecurity" />
   </js-module>

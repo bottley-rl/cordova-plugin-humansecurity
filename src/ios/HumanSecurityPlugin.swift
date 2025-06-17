@@ -18,8 +18,6 @@ class HumanSecurityPlugin: CDVPlugin {
 
         self.appId = appId
         self.domainList = Set(domainString.components(separatedBy: ","))
-
-        startHumanSDK()
     }
 
     @objc(start:)
