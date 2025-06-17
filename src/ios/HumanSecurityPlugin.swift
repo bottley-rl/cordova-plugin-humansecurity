@@ -24,8 +24,14 @@ class HumanSecurityPlugin: CDVPlugin {
 
     @objc(start:)
     func start(command: CDVInvokedUrlCommand) {
-        guard let appId = self.appId, let domainList = self.domainList else {
-            let result = CDVPluginResult(status: .error, messageAs: "AppId or domainList not initialized")
+        guard let appId = self.appId else {
+            let result = CDVPluginResult(status: .error, messageAs: "AppId not initialized")
+            self.commandDelegate.send(result, callbackId: command.callbackId)
+            return
+        }
+
+        if domainList.isEmpty {
+            let result = CDVPluginResult(status: .error, messageAs: "Domain list is empty")
             self.commandDelegate.send(result, callbackId: command.callbackId)
             return
         }
