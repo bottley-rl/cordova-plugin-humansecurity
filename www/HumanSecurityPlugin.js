@@ -1,12 +1,16 @@
 var exec = require('cordova/exec');
 
 var HumanSecurityPlugin = {
-  setUserId: function (userId, appId, success, error) {
-    exec(success, error, 'HumanSecurityPlugin', 'setUserId', [userId, appId]);
+  start: function (success, error) {
+    exec(success, error, 'HumanSecurityPlugin', 'start', []);
   },
 
-  getHeaders: function (appId, success, error) {
-    exec(success, error, 'HumanSecurityPlugin', 'getHeaders', [appId]);
+  setUserId: function (userId, success, error) {
+    exec(success, error, 'HumanSecurityPlugin', 'setUserId', [userId]);
+  },
+
+  getHeaders: function (success, error) {
+    exec(success, error, 'HumanSecurityPlugin', 'getHeaders', []);
   },
 
   handleResponse: function (responseString, success, error) {
