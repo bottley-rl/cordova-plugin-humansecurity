@@ -37,36 +37,41 @@ class HumanSecurityPlugin: CDVPlugin {
     }
 
    func startHumanSDK() {
-        do {
-            let policy = HSPolicy()
-            policy.hybridAppPolicy.set(webRootDomains: domainList, forAppId: appId)
-            policy.hybridAppPolicy.supportExternalWebViews = true
-            policy.hybridAppPolicy.automaticSetup = false
-            policy.hybridAppPolicy.allowJavaScriptEvaluation = false
+        guard let appId = self.appId else {
+            print("[HumanSecurityPlugin] Cannot start SDK – appId is nil")
+            return
+        }
 
-            policy.doctorAppPolicy.enabled = true
+        if domainList.isEmpty {
+            print("[HumanSecurityPlugin] Cannot start SDK – domain list is empty")
+            return
+        }
 
-            policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
+        let policy = HSPolicy()
+        policy.hybridAppPolicy.set(webRootDomains: domainList, forAppId: appId)
+        policy.hybridAppPolicy.supportExternalWebViews = true
+        policy.hybridAppPolicy.automaticSetup = false
+        policy.hybridAppPolicy.allowJavaScriptEvaluation = false
 
-            HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 10
+        policy.doctorAppPolicy.enabled = true
+        policy.automaticInterceptorPolicy.interceptorType = .interceptWithDelayedResponse
 
-            DispatchQueue.main.async {
-                do {
-                    try HumanSecurity.start(appId: appId, policy: policy)
-                    print("[HumanSecurityPlugin] Human SDK initialized with appId: \(appId)")
+        HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 10
 
-                    if let wkWebView = self.findWKWebView(in: self.webView?.superview) {
-                        HumanSecurity.setupWebView(webView: wkWebView, navigationDelegate: wkWebView.navigationDelegate)
-                        print("[HumanSecurityPlugin] setupWebView called")
-                    } else {
-                        print("[HumanSecurityPlugin] Failed to find WKWebView")
-                    }
-                } catch {
-                    print("[HumanSecurityPlugin] Failed to Start: \(error.localizedDescription)")
+        DispatchQueue.main.async {
+            do {
+                try HumanSecurity.start(appId: appId, policy: policy)
+                print("[HumanSecurityPlugin] Human SDK initialized with appId: \(appId)")
+
+                if let wkWebView = self.findWKWebView(in: self.webView?.superview) {
+                    HumanSecurity.setupWebView(webView: wkWebView, navigationDelegate: wkWebView.navigationDelegate)
+                    print("[HumanSecurityPlugin] setupWebView called")
+                } else {
+                    print("[HumanSecurityPlugin] Failed to find WKWebView")
                 }
+            } catch {
+                print("[HumanSecurityPlugin] Failed to Start: \(error.localizedDescription)")
             }
-        } catch {
-            print("[HumanSecurityPlugin] Start Error: \(error)")
         }
     }
 
