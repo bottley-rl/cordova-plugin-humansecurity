@@ -1,7 +1,6 @@
 #import "AppDelegate+HumanSecurity.h"
 #import <HUMAN/HUMAN.h>
 #import <objc/runtime.h>
-#import <Cordova/CDVViewController.h>
 
 @implementation AppDelegate (HumanSecurity)
 
@@ -13,24 +12,17 @@
 
 - (BOOL)human_application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions {
     @try {
-        UIViewController *rootVC = self.window.rootViewController;
-        if (![rootVC isKindOfClass:[CDVViewController class]]) {
-            NSLog(@"[HumanSecurityPlugin] Root VC is not CDVViewController. Cannot read plugin preferences.");
-            return [self human_application:application didFinishLaunchingWithOptions:launchOptions];
-        }
-
-        CDVViewController *cdvVC = (CDVViewController *)rootVC;
-        NSDictionary *settings = cdvVC.settings;
-
-        NSString *appId = settings[@"human_app_id"];
-        NSString *domainsString = settings[@"human_domains"];
+        
+        NSString *appId = [[NSUserDefaults standardUserDefaults] stringForKey:@"human_app_id"];
+        NSString *domainsString = [[NSUserDefaults standardUserDefaults] stringForKey:@"human_domains"];
 
         if (!appId || !domainsString) {
-            NSLog(@"[HumanSecurityPlugin] Missing preferences: human_app_id and/or human_domains");
-            return [self human_application:application didFinishLaunchingWithOptions:launchOptions];
+            NSLog(@"[HumanSecurityPlugin] AppId or domains missing in UserDefaults — fallback values will be used");
+            appId = @"PXxTfdm2W9";
+            domainsString = @".rocketlawyer.com";
         }
 
-        NSSet *domainSet = [NSSet setWithArray:[domainsString componentsSeparatedByString:@","]];
+        NSSet *domains = [NSSet setWithArray:[domainsString componentsSeparatedByString:@","]];
 
         HSPolicy *policy = [[HSPolicy alloc] init];
         [policy.hybridAppPolicy setWithWebRootDomains:domainSet forAppId:appId];
