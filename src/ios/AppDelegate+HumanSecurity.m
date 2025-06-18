@@ -25,7 +25,7 @@
         NSSet *domains = [NSSet setWithArray:[domainsString componentsSeparatedByString:@","]];
 
         HSPolicy *policy = [[HSPolicy alloc] init];
-        [policy.hybridAppPolicy setWithWebRootDomains:domainSet forAppId:appId];
+        [policy.hybridAppPolicy setWithWebRootDomains:domains forAppId:appId];
         policy.hybridAppPolicy.automaticSetup = YES;
         policy.hybridAppPolicy.supportExternalWebViews = YES;
         policy.hybridAppPolicy.allowJavaScriptEvaluation = NO;
