@@ -4,26 +4,10 @@ import HUMAN
 @objc(HumanSecurityPlugin)
 class HumanSecurityPlugin: CDVPlugin {
 
-    override func pluginInitialize() {
-        guard
-            let appId = self.commandDelegate?.settings["human_app_id"] as? String,
-            let domainString = self.commandDelegate?.settings["human_domains"] as? String
-        else {
-            print("[HumanSecurityPlugin] Missing plugin preferences: human_app_id and/or human_domains")
-            return
-        }
-
-        UserDefaults.standard.set(appId, forKey: "human_app_id")
-        UserDefaults.standard.set(domainString, forKey: "human_domains")
-        UserDefaults.standard.synchronize()
-
-        print("[HumanSecurityPlugin] Saved plugin variables to UserDefaults")
-    }
-
     @objc(getHeaders:)
     func getHeaders(command: CDVInvokedUrlCommand) {
         guard
-            let appId = self.commandDelegate?.settings["human_app_id"] as? String
+            let appId = Bundle.main.object(forInfoDictionaryKey: "HUMAN_APP_ID") as? String
         else {
             let result = CDVPluginResult(status: .error, messageAs: "AppId not initialized")
             self.commandDelegate.send(result, callbackId: command.callbackId)
@@ -60,7 +44,7 @@ class HumanSecurityPlugin: CDVPlugin {
     @objc(setUserId:)
     func setUserId(command: CDVInvokedUrlCommand) {
         guard
-            let appId = self.commandDelegate?.settings["human_app_id"] as? String
+            let appId = Bundle.main.object(forInfoDictionaryKey: "HUMAN_APP_ID") as? String
         else {
             print("[HumanSecurityPlugin] setUserId missing human_app_id")
             return

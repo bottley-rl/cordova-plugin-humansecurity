@@ -13,14 +13,8 @@
 - (BOOL)human_application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions {
     @try {
         
-        NSString *appId = [[NSUserDefaults standardUserDefaults] stringForKey:@"human_app_id"];
-        NSString *domainsString = [[NSUserDefaults standardUserDefaults] stringForKey:@"human_domains"];
-
-        if (!appId || !domainsString) {
-            NSLog(@"[HumanSecurityPlugin] AppId or domains missing in UserDefaults — fallback values will be used");
-            appId = @"PXxTfdm2W9";
-            domainsString = @".rocketlawyer.com";
-        }
+        NSString *appId = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"HUMAN_APP_ID"];
+        NSString *domainsString = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"HUMAN_DOMAINS"];
 
         NSSet *domains = [NSSet setWithArray:[domainsString componentsSeparatedByString:@","]];
 

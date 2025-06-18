@@ -7,6 +7,9 @@
   
   <license>MIT</license>
 
+  <preference name="HUMAN_APP_ID" value="$HUMAN_APP_ID" />
+  <preference name="HUMAN_DOMAINS" value="$HUMAN_DOMAINS" />
+
   <platform name="ios">
   <source-file src="src/ios/HumanSecurityPlugin.swift" />
   <header-file src="src/ios/HumanSecurity-Bridging-Header.h" />
@@ -24,10 +27,13 @@
     </pods>
   </podspec>
 
-  <config-file target="config.xml" parent="/*">
-    <preference name="HUMAN_APP_ID" value="$HUMAN_APP_ID" />
-    <preference name="HUMAN_DOMAINS" value="$HUMAN_DOMAINS" />
-  </config-file>
+  <config-file target="*-Info.plist" parent="HUMAN_APP_ID">
+			<string>$HUMAN_APP_ID</string>
+	</config-file>
+
+  <config-file target="*-Info.plist" parent="HUMAN_DOMAINS">
+			<string>$HUMAN_DOMAINS</string>
+	</config-file>
 
   <config-file parent="/*" target="config.xml">
     <feature name="HumanSecurityPlugin">
