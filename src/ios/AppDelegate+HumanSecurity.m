@@ -27,7 +27,7 @@
         policy.automaticInterceptorPolicy.interceptorType = HSAutomaticInterceptorTypeInterceptWithDelayedResponse;
         HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 15;
 
-        policy.doctorAppPolicy.enabled = YES;
+        policy.doctorAppPolicy.enabled = NO;
 
         NSError *error = nil;
         [HumanSecurity startWithAppId:appId policy:policy error:&error];
