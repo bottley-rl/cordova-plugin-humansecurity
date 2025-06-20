@@ -25,7 +25,7 @@
         policy.hybridAppPolicy.allowJavaScriptEvaluation = NO;
 
         policy.automaticInterceptorPolicy.interceptorType = HSAutomaticInterceptorTypeInterceptWithDelayedResponse;
-        HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 3;
+        HSAutomaticInterceptorPolicy.urlSessionRequestTimeout = 15;
 
         policy.doctorAppPolicy.enabled = YES;
 
